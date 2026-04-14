@@ -22,6 +22,18 @@ copy watcher_settings.example.ini watcher_settings.ini
 python gui.py
 ```
 
+## Easy start on Windows (batch files)
+
+For a simpler source workflow on Windows, use the included batch scripts:
+
+```bat
+install_requirements.bat
+start_gui.bat
+```
+
+- `install_requirements.bat` installs Python dependencies from `requirements.txt`.
+- `start_gui.bat` starts the Control Center GUI (`gui.py`).
+
 Edit the `.ini` files (or use the GUI **Save Settings**) before processing real jobs.
 
 ## Requirements

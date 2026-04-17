@@ -1,0 +1,23 @@
+# Bytecode / venv
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+.env/
+
+# Local config (use *.example.ini in repo)
+settings.ini
+watcher_settings.ini
+
+# Runtime / cache next to tools
+autocut_cache.txt
+watcher_processed.txt
+
+# Build / IDE
+build/
+dist/
+*.spec.bak
+.idea/
+.vscode/
+*.log

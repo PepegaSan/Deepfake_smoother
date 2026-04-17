@@ -4,21 +4,18 @@ import time
 import subprocess
 import re
 import tkinter as tk
-from tkinter import filedialog, messagebox
+from tkinter import filedialog
 import configparser
 
 TEXTS = {
     'en': {
-        'saved_title': "Saved Paths Found",
-        'saved_msg': "Should the saved folders be used?\n\nOriginals: {s}\nDeepfakes: {d}\n\n(No = Select new folders)",
         'select_prompt': "Please select the two required folders in the pop-up windows...",
         'sel_src': "1. Select ORIGINAL Folder (Source)",
         'sel_df': "2. Select DEEPFAKE Folder (Monitored)",
         'abort': "Aborted.",
         'invalid_paths': "Saved paths invalid or not found. Starting folder selection...\n",
-        'saved_declined': "Starting new folder selection (saved paths were not used)...\n",
         'davinci_start': "DaVinci Resolve is not open. Starting program...",
-        'davinci_wait': "Waiting 20 seconds for the API to be ready...",
+        'davinci_wait': "Waiting {sec} seconds for DaVinci (settings.ini: davinci_startup_wait_seconds)...",
         'davinci_err': "[ERROR] DaVinci Resolve could not be started: {e}",
         'davinci_path': "Please check the path in watcher_settings.ini:\n{path}",
         'err_multi': "[ERROR] Ambiguous: Multiple originals match '{word}'. Skipping. Please rename or move unused originals.",
@@ -38,16 +35,13 @@ TEXTS = {
         'sys_err': "[SYSTEM ERROR] {e}"
     },
     'de': {
-        'saved_title': "Gespeicherte Pfade gefunden",
-        'saved_msg': "Sollen die gespeicherten Ordner verwendet werden?\n\nOriginale: {s}\nDeepfakes: {d}\n\n(Nein = Neue Ordner auswaehlen)",
         'select_prompt': "Bitte waehle die zwei benoetigten Ordner in den aufpoppenden Fenstern aus...",
         'sel_src': "1. ORIGINAL-Ordner (Source) auswaehlen",
         'sel_df': "2. DEEPFAKE-Ordner (wird ueberwacht) auswaehlen",
         'abort': "Abbruch.",
         'invalid_paths': "Gespeicherte Pfade ungueltig oder nicht gefunden. Starte Ordnerabfrage...\n",
-        'saved_declined': "Neue Ordnerauswahl (gespeicherte Pfade werden nicht verwendet)...\n",
         'davinci_start': "DaVinci Resolve ist nicht geoeffnet. Starte Programm...",
-        'davinci_wait': "Warte 20 Sekunden, bis die API bereit ist...",
+        'davinci_wait': "Warte {sec} Sekunden auf DaVinci (settings.ini: davinci_startup_wait_seconds)...",
         'davinci_err': "[FEHLER] DaVinci Resolve konnte nicht gestartet werden: {e}",
         'davinci_path': "Bitte pruefe den Pfad in der watcher_settings.ini:\n{path}",
         'err_multi': "[FEHLER] Uneindeutig: Mehrere Originale passen zu '{word}'. Ueberspringe. Bitte Originale eindeutig benennen!",
@@ -124,18 +118,8 @@ def get_watcher_config():
         prefix_length = config.getint('MATCHING', 'match_prefix_length', fallback=prefix_length)
         ignore_suffix = config.get('MATCHING', 'ignore_suffix', fallback=ignore_suffix)
 
-    if s_dir and d_dir and os.path.exists(s_dir) and os.path.exists(d_dir):
-        root = tk.Tk()
-        root.withdraw()
-        root.attributes("-topmost", True)
-
-        use_saved = messagebox.askyesno(
-            TEXTS[lang]['saved_title'],
-            TEXTS[lang]['saved_msg'].format(s=s_dir, d=d_dir)
-        )
-        root.destroy()
-
-        if use_saved:
+    if s_dir and d_dir:
+        if os.path.exists(s_dir) and os.path.exists(d_dir):
             return (
                 s_dir,
                 d_dir,
@@ -148,8 +132,7 @@ def get_watcher_config():
                 ignore_suffix,
                 afk_mode,
             )
-        else:
-            print(TEXTS[lang]['saved_declined'])
+        print(TEXTS[lang]['invalid_paths'])
 
     root = tk.Tk()
     root.withdraw()
@@ -212,6 +195,22 @@ def is_davinci_enabled():
     return False
 
 
+def get_davinci_startup_wait_seconds():
+    """Same key as Control Center / compare prep: SETTINGS.davinci_startup_wait_seconds in settings.ini."""
+    config_path = os.path.join(get_base_dir(), 'settings.ini')
+    config = configparser.ConfigParser()
+    if not os.path.exists(config_path):
+        return 20
+    config.read(config_path)
+    if not config.has_section('SETTINGS'):
+        return 20
+    try:
+        v = config.getint('SETTINGS', 'davinci_startup_wait_seconds', fallback=20)
+    except ValueError:
+        return 20
+    return max(0, min(600, v))
+
+
 def is_resolve_running():
     if sys.platform != 'win32':
         return False
@@ -238,8 +237,10 @@ def start_resolve(resolve_exe_path, lang):
             print(TEXTS[lang]['davinci_err'].format(e=e))
             print(TEXTS[lang]['davinci_path'].format(path=resolve_exe_path))
             return
-        print(TEXTS[lang]['davinci_wait'])
-        time.sleep(20)
+        wait_sec = get_davinci_startup_wait_seconds()
+        if wait_sec > 0:
+            print(TEXTS[lang]['davinci_wait'].format(sec=wait_sec))
+            time.sleep(wait_sec)
 
 
 def normalize_name(filename):
@@ -294,10 +295,21 @@ def is_file_stable(filepath, wait_seconds):
 
 
 def get_processed_files(log_path):
+    """Lines are usually video basenames; full paths are accepted (basename is also indexed)."""
     if not os.path.exists(log_path):
         return set()
+    out = set()
     with open(log_path, 'r', encoding='utf-8-sig') as f:
-        return set(line.strip().lower() for line in f)
+        for line in f:
+            raw = line.strip()
+            if not raw:
+                continue
+            low = raw.lower()
+            out.add(low)
+            base = os.path.basename(low)
+            if base and base != low:
+                out.add(base)
+    return out
 
 
 def mark_as_processed(log_path, filename):

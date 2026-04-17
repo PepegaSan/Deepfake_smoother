@@ -6,6 +6,15 @@ Includes a **Control Center** GUI (`gui.py` / `gui.exe`), an **Auto-Watcher** fo
 
 Pre-built releases can run **without installing Python**; this repository is the **source** tree.
 
+## UI
+
+Control Center (dark theme example). Paths in the screenshot are placeholders only.
+
+![AutoCut Control Center](UI.png)
+
+- **Export** tab: optional **“Video export files”** block — do not overwrite FFmpeg / DaVinci outputs; filenames get a filter-based suffix (`export_avoid_overwrite` in `settings.ini`).
+- **Light / Dark** is stored under `[GUI]` → `ui_theme` in `settings.ini` and applies to the Control Center and to **Flickercheck** (`flickercheck_ui.py`) via shared `theme_palette.py`.
+
 ## Documentation
 
 | File | Audience |
@@ -41,6 +50,16 @@ Edit the `.ini` files (or use the GUI **Save Settings**) before processing real 
 - Windows (primary target)
 - Python 3.x + dependencies in `requirements.txt` when running from source
 - Optional: **DaVinci Resolve Studio** for API export; **FFmpeg** / **ffmpeg.exe** for encodes
+
+## Repo layout (high level)
+
+| Module | Role |
+|--------|------|
+| `compare.py` | Analysis, EDL, FFmpeg, DaVinci export |
+| `gui.py` | Control Center |
+| `watcher.py` | Folder watcher → `compare` with `--auto` |
+| `flickercheck_ui.py` | Visual threshold tuning |
+| `theme_palette.py` | Shared colors + `load_ui_theme_is_light()` for GUI + Flickercheck |
 
 ## License
 

@@ -9,9 +9,11 @@ The repository landing page for GitHub is **[README.md](README.md)**.
 | Item | Purpose |
 |------|---------|
 | `compare.py`, `watcher.py`, `gui.py`, `flickercheck_ui.py` | Application sources (`flickercheck_ui.py` = visual threshold helper) |
+| `theme_palette.py` | Shared `PALETTE_LIGHT` / `PALETTE_DARK` and `load_ui_theme_is_light()` for GUI + Flickercheck |
+| `UI.png` | Screenshot for docs (README “UI” section); replace with your own if paths must stay private |
 | `Readme.txt` | User documentation (GUI, Watcher, Send To, settings) |
 | `LICENSE` | GNU GPL v3.0 |
-| `gui.spec` | PyInstaller reference |
+| `packaging/*.spec`, `packaging/build_all.bat` | PyInstaller **one-file** specs (windowed); run from repo root — see [packaging/README.md](packaging/README.md) |
 | `settings.example.ini`, `watcher_settings.example.ini` | Config templates (no real paths) |
 | `requirements.txt` | Python dependencies |
 | `run_compare.cmd` | Launch `compare.py` from Explorer / cmd |
@@ -41,3 +43,5 @@ The repository landing page for GitHub is **[README.md](README.md)**.
 ## Notes
 
 `compare.py` looks for `ffmpeg.exe` next to the script; for development, `ffmpeg` on `PATH` is enough.
+
+The **`packaging/gui.spec`** and **`packaging/flickercheck.spec`** files already list `hiddenimports=['theme_palette']` for one-file `gui.exe` / `flickercheck_ui.exe`.

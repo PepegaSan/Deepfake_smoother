@@ -17,6 +17,13 @@ Send To. The sections below still describe `settings.ini` / behaviour in full; t
 writes the same keys.
 
 -----------------------------------------------------------------------
+0. UI (SCREENSHOT)
+-----------------------------------------------------------------------
+The repository includes **UI.png** (Control Center, example dark theme). On GitHub the
+same image is embedded in **README.md** under “UI”. The screenshot uses placeholder path
+fields only — swap it for your own marketing shot if you publish paths.
+
+-----------------------------------------------------------------------
 1. FIRST RUN & CONFIGURATION (SETTINGS.INI)
 -----------------------------------------------------------------------
 You can adjust the tool's behavior without editing any code. Upon first launch,
@@ -99,6 +106,13 @@ ffmpeg_encoder = nvidia_av1
 
 Invalid or missing values behave like "both".
 
+* export_avoid_overwrite = 0 (optional, 1 = on): When enabled, FFmpeg and DaVinci do not
+  overwrite an existing output file with the same base name. Outputs get a suffix built
+  from the compare filter (buffer / noise / pixel), then _2 … _20 if the name is still
+  taken. Configure from the Control Center **Export** tab (“Video export files”) or edit
+  `settings.ini` directly. Watcher runs use the same setting; generated names still contain
+  `_AutoCut` / `_DaVinci_Export` so the watcher ignores them as outputs.
+
 G. Custom Export Folder
 
 By default, all generated files (AutoCut videos, EDLs, DaVinci exports) are saved in the same directory as the source video. If you prefer to collect all exported files in a single, specific location, you can define a custom path in the `settings.ini`.
@@ -156,12 +170,21 @@ The **Control Center** (`gui.py` / `gui.exe`) is the usual way to work from sour
 
 * **Watcher & Paths** – Original folder, deepfake (watched) folder, optional export folder;
   language for watcher console; same values as `watcher_settings.ini`.
-* **Export Methods** – DaVinci, FFmpeg, EDL-related options (stored in `settings.ini`).
+* **Export** – DaVinci Resolve (API path, timeouts), then **Video export files** (optional
+  no-overwrite naming for FFmpeg + DaVinci), EDL toggles, FFmpeg codec and target clips
+  (all stored in `settings.ini`).
 * **Filter & Ignore** – RegEx / suffix ignores for the watcher, buffer and pixel thresholds.
-* **Manual & Tools** – Pick two videos and run Compare; launch Flickercheck UI for tuning.
+* **Tools** – Pick two videos and run Compare; launch Flickercheck UI for tuning.
 * **Processed Log** – Edit `watcher_processed.txt` for the current deepfake folder safely.
 
+**Appearance:** Light or Dark mode (options / theme control in the GUI) is saved as
+`[GUI] ui_theme = light` or `dark` in `settings.ini`. The **Flickercheck** window
+(`flickercheck_ui.py`) reads the same key on startup so it matches the Control Center.
+
 Use **Save Settings** at the bottom to write `settings.ini` and `watcher_settings.ini`.
+
+Source tree also includes **theme_palette.py** (shared palette + theme loader for
+`gui.py` and `flickercheck_ui.py`).
 
 -----------------------------------------------------------------------
 4. AUTO-WATCHER (watcher.py / watcher.exe)
@@ -193,7 +216,7 @@ will treat it as new on the next scan.
 `davinci_render_timeout_seconds` in **settings.ini** caps only the DaVinci Deliver phase after
 render has started (`0` = wait indefinitely). See section 2 above.
 
-**Flickercheck:** The Watcher does not open Flickercheck. Use the GUI **Manual & Tools** tab or
+**Flickercheck:** The Watcher does not open Flickercheck. Use the GUI **Tools** tab or
 run `flickercheck_ui.py` yourself; **Apply thresholds → settings.ini** updates Compare’s pixel
 settings.
 
@@ -214,7 +237,7 @@ settings.
    your settings.ini preferences.
 
 (Alternatively, simply double-click "compare.exe" to select the files via a
-graphical menu, or use the Control Center **Manual & Tools** tab.)
+graphical menu, or use the Control Center **Tools** tab.)
 
 
 ### Troubleshooting / Common Issues
@@ -250,5 +273,5 @@ Copyright (C) 2026 the Flickchecker contributors.
 The source code is licensed under the GNU General Public License v3.0.
 See the file LICENSE for the full text (https://www.gnu.org/licenses/gpl-3.0).
 
-GitHub shows README.md on the project front page. Full user details stay in this file;
-developers building from source: see DEV_README.md.
+GitHub shows README.md on the project front page (including the **UI** screenshot).
+Full user details stay in this file; developers building from source: see DEV_README.md.

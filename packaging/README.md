@@ -4,11 +4,14 @@ All specs assume you run **PyInstaller from the repository root** (parent of thi
 
 ## Requirements
 
+From the **repository root**:
+
 ```bat
-pip install pyinstaller
+python -m pip install -r requirements.txt
+python -m pip install -r packaging\requirements-build.txt
 ```
 
-(Optional) your app dependencies from repo root: `pip install -r requirements.txt`
+Or use **`packaging\build_all.bat`**, which runs both installs (uses `py -3` when available), then builds all four specs with `python -m PyInstaller`.
 
 ## Build
 
@@ -32,7 +35,7 @@ Artifacts land in **`dist/`**: `gui.exe`, `flickercheck_ui.exe`, `compare.exe`, 
 ## Notes
 
 - **Windowed** (`console=False`) for all four — no extra console window. For debugging, run `python gui.py` etc. from a terminal instead.
-- **`gui.exe`** / **`flickercheck_ui.exe`**: `hiddenimports` includes **`theme_palette`** (shared light/dark colors).
+- **`gui.exe`** / **`flickercheck_ui.exe`**: `hiddenimports` includes **`theme_palette`**. **`gui.exe`** uses **`collect_all("tkinterdnd2")`** so the bundled **tkdnd** Tcl extension ships with the exe (Tools-tab drag & drop).
 - **`compare.exe`**: does not import `theme_palette`; still built from repo-root `pathex` so local modules are found if you add any later.
 - Copy **`theme_palette.py` is not needed next to the exe** — it is bundled. You still need **`settings.ini`**, optional **`ffmpeg.exe`**, and **`DaVinciResolveScript`** path as before.
 - UPX is left enabled in the spec; if packaging fails on your machine, set `upx=False` in the spec files.

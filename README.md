@@ -24,12 +24,16 @@ Control Center (dark theme example). Paths in the screenshot are placeholders on
 
 ## Quick start (source)
 
+**Python 3.10+** recommended (Windows wheels for OpenCV and **tkinterdnd2**).
+
 ```bat
-pip install -r requirements.txt
+python -m pip install -r requirements.txt
 copy settings.example.ini settings.ini
 copy watcher_settings.example.ini watcher_settings.ini
 python gui.py
 ```
+
+Runtime dependencies are listed in **`requirements.txt`** (including **CustomTkinter**, **tkinterdnd2** for Tools-tab drag-and-drop from Explorer, OpenCV / NumPy / Pillow for compare and Flickercheck).
 
 ## Easy start on Windows (batch files)
 
@@ -40,15 +44,17 @@ install_requirements.bat
 start_gui.bat
 ```
 
-- `install_requirements.bat` installs Python dependencies from `requirements.txt`.
-- `start_gui.bat` starts the Control Center GUI (`gui.py`).
+- `install_requirements.bat` installs dependencies from `requirements.txt` (uses **`py -3`** when available, otherwise **`python`**).
+- `start_gui.bat` starts the Control Center (`gui.py`) with the same launcher preference.
+
+**One-file `.exe` builds:** from the repo root run `packaging\build_all.bat` — it installs `requirements.txt`, then **`packaging\requirements-build.txt`** (PyInstaller), and runs all specs. Details: [packaging/README.md](packaging/README.md).
 
 Edit the `.ini` files (or use the GUI **Save Settings**) before processing real jobs.
 
 ## Requirements
 
 - Windows (primary target)
-- Python 3.x + dependencies in `requirements.txt` when running from source
+- **Python 3.10+** and packages in **`requirements.txt`** when running from source (`customtkinter`, `tkinterdnd2`, `opencv-python`, `numpy`, `Pillow`, …)
 - Optional: **DaVinci Resolve Studio** for API export; **FFmpeg** / **ffmpeg.exe** for encodes
 
 ## Repo layout (high level)

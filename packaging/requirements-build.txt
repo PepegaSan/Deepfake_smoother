@@ -1,0 +1,2 @@
+# PyInstaller — only needed to run packaging\build_all.bat (one-file .exe builds)
+pyinstaller>=6.8.0

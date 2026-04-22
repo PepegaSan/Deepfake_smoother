@@ -15,7 +15,8 @@ The repository landing page for GitHub is **[README.md](README.md)**.
 | `LICENSE` | GNU GPL v3.0 |
 | `packaging/*.spec`, `packaging/build_all.bat` | PyInstaller **one-file** specs (windowed); run from repo root — see [packaging/README.md](packaging/README.md) |
 | `settings.example.ini`, `watcher_settings.example.ini` | Config templates (no real paths) |
-| `requirements.txt` | Python dependencies |
+| `requirements.txt` | Runtime Python dependencies (incl. **customtkinter**, **tkinterdnd2** for GUI Tools DnD, OpenCV / NumPy / Pillow) |
+| `packaging/requirements-build.txt` | **PyInstaller** only — for `packaging/build_all.bat` |
 | `run_compare.cmd` | Launch `compare.py` from Explorer / cmd |
 
 ## Setup (Windows)
@@ -25,7 +26,8 @@ The repository landing page for GitHub is **[README.md](README.md)**.
    `.venv\Scripts\activate`
 
 2. **Dependencies**  
-   `pip install -r requirements.txt`
+   `pip install -r requirements.txt`  
+   (Python **3.10+** recommended on Windows for prebuilt wheels.)
 
 3. **Config (once)**  
    `copy settings.example.ini settings.ini`  

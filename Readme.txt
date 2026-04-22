@@ -168,6 +168,12 @@ If you want to use the automatic DaVinci Resolve timeline creation and rendering
 -----------------------------------------------------------------------
 The **Control Center** (`gui.py` / `gui.exe`) is the usual way to work from source:
 
+**Python from source:** Install dependencies once with `pip install -r requirements.txt`
+(or run **`install_requirements.bat`** in the repo folder). The GUI needs **CustomTkinter**
+and **tkinterdnd2** (drag-and-drop from Explorer on the **Tools** tab). If Compare/Analyzer
+or drag-and-drop fails after an update, re-run the installer batch so versions match
+`requirements.txt`.
+
 * **Watcher & Paths** – Original folder, deepfake (watched) folder, optional export folder;
   language for watcher console; same values as `watcher_settings.ini`.
 * **Export** – DaVinci Resolve (API path, timeouts), then **Video export files** (optional

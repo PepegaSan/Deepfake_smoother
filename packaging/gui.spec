@@ -2,14 +2,18 @@
 """One-file windowed build. Run from repo root: pyinstaller packaging/gui.spec"""
 import os
 
+from PyInstaller.utils.hooks import collect_all
+
 _root = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(SPEC)), ".."))
+
+_tkdnd_datas, _tkdnd_bins, _tkdnd_hidden = collect_all("tkinterdnd2")
 
 a = Analysis(
     [os.path.join(_root, "gui.py")],
     pathex=[_root],
-    binaries=[],
-    datas=[],
-    hiddenimports=["theme_palette"],
+    binaries=_tkdnd_bins,
+    datas=_tkdnd_datas,
+    hiddenimports=["theme_palette", *_tkdnd_hidden],
     hookspath=[],
     hooksconfig={},
     runtime_hooks=[],
